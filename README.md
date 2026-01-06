@@ -10,13 +10,13 @@ A full-stack web application for a tree services business that allows clients to
 - **Admin Dashboard**: Secure admin interface to view, filter, update, and delete appointments
 - **Email Notifications**: Automatic email confirmations to clients and notifications to business owner
 - **Minimalistic Design**: Clean, professional, and responsive UI
-- **Database Storage**: SQLite database for easy setup and data persistence
+- **Database Storage**: SQLite (development) or PostgreSQL (production) database support
 
 ## Technology Stack
 
 - **Frontend**: React 18, React Router, Axios
 - **Backend**: Node.js, Express.js
-- **Database**: SQLite3
+- **Database**: SQLite3 (development) / PostgreSQL (production)
 - **Email**: Nodemailer
 
 ## Project Structure

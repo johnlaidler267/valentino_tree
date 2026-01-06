@@ -252,11 +252,36 @@ For more control, use a VPS.
 
 ### Database (SQLite → PostgreSQL for Production)
 
-For production, consider migrating to PostgreSQL:
+The application now supports both SQLite (development) and PostgreSQL (production). To use PostgreSQL:
 
-1. **Install PostgreSQL** on your server or use a managed service
-2. **Update backend** to use `pg` instead of `sqlite3`
-3. **Update database.js** to use PostgreSQL connection
+1. **Set up PostgreSQL**:
+   - Use a managed service (Railway, Render, Supabase, etc.) or install on your server
+   - Get your connection string or individual connection parameters
+
+2. **Configure environment variables**:
+   ```
+   # Option 1: Use DATABASE_URL (recommended)
+   DATABASE_URL=postgresql://user:password@host:port/database
+   DB_TYPE=postgresql
+   
+   # Option 2: Use individual parameters
+   DB_TYPE=postgresql
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=valentino_tree
+   DB_USER=postgres
+   DB_PASSWORD=your-password
+   DATABASE_SSL=false  # Set to 'true' for managed services
+   ```
+
+3. **Install dependencies** (already included):
+   - `pg` package is already in package.json
+   - Run `npm install` in the backend directory
+
+4. **The database will automatically**:
+   - Detect PostgreSQL from DATABASE_URL or DB_TYPE
+   - Create all necessary tables on first run
+   - Convert SQL syntax automatically
 
 ### Environment Variables
 
