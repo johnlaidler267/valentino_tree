@@ -113,7 +113,7 @@ const BookingForm = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post(`${API_URL}/appointments`, formData);
+      await axios.post(`${API_URL}/appointments`, formData);
       setSubmitStatus({ type: 'success', message: 'Appointment booked successfully! You will receive a confirmation email shortly.' });
       // Reset form
       setFormData({

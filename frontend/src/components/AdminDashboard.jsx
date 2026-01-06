@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import NewsletterEditor from './NewsletterEditor';
 import ProductManagement from './ProductManagement';
@@ -17,34 +17,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchAppointments();
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    filterAppointments();
-  }, [appointments, statusFilter, searchTerm]);
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    try {
-      const response = await axios.post(`${API_URL}/admin/login`, { password });
-      if (response.data.authenticated) {
-        setIsAuthenticated(true);
-        localStorage.setItem('adminPassword', password);
-        setPassword('');
-      }
-    } catch (err) {
-      setError('Invalid password. Please try again.');
-      setPassword('');
-    }
-  };
-
-  const fetchAppointments = async () => {
+  const fetchAppointments = useCallback(async () => {
     setLoading(true);
     const adminPassword = localStorage.getItem('adminPassword') || password;
     try {
@@ -64,9 +37,9 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [password]);
 
-  const filterAppointments = () => {
+  const filterAppointments = useCallback(() => {
     let filtered = [...appointments];
 
     // Filter by status
@@ -87,7 +60,35 @@ const AdminDashboard = () => {
     }
 
     setFilteredAppointments(filtered);
+  }, [appointments, statusFilter, searchTerm]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchAppointments();
+    }
+  }, [isAuthenticated, fetchAppointments]);
+
+  useEffect(() => {
+    filterAppointments();
+  }, [filterAppointments]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const response = await axios.post(`${API_URL}/admin/login`, { password });
+      if (response.data.authenticated) {
+        setIsAuthenticated(true);
+        localStorage.setItem('adminPassword', password);
+        setPassword('');
+      }
+    } catch (err) {
+      setError('Invalid password. Please try again.');
+      setPassword('');
+    }
   };
+
 
   const updateStatus = async (id, newStatus) => {
     const adminPassword = localStorage.getItem('adminPassword') || password;

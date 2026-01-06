@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './ProductManagement.css';
 
@@ -21,16 +21,11 @@ const ProductManagement = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  useEffect(() => {
-    fetchProducts();
-    fetchOrders();
-  }, []);
-
   const getAdminPassword = () => {
     return localStorage.getItem('adminPassword') || '';
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const response = await axios.get(`${API_URL}/store/admin/products`, {
         headers: { 'x-admin-password': getAdminPassword() }
@@ -42,9 +37,9 @@ const ProductManagement = () => {
         setError('Authentication failed. Please log in again.');
       }
     }
-  };
+  }, []);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const response = await axios.get(`${API_URL}/store/admin/orders`, {
         headers: { 'x-admin-password': getAdminPassword() }
@@ -53,7 +48,12 @@ const ProductManagement = () => {
     } catch (err) {
       console.error('Error fetching orders:', err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+    fetchOrders();
+  }, [fetchProducts, fetchOrders]);
 
   const loadProduct = (product) => {
     setSelectedProduct(product);

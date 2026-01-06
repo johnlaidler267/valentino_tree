@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './NewsletterEditor.css';
 
@@ -15,16 +15,11 @@ const NewsletterEditor = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  useEffect(() => {
-    fetchDrafts();
-    fetchSendHistory();
-  }, []);
-
   const getAdminPassword = () => {
     return localStorage.getItem('adminPassword') || '';
   };
 
-  const fetchDrafts = async () => {
+  const fetchDrafts = useCallback(async () => {
     try {
       const response = await axios.get(`${API_URL}/newsletter/drafts`, {
         headers: { 'x-admin-password': getAdminPassword() }
@@ -33,9 +28,9 @@ const NewsletterEditor = () => {
     } catch (err) {
       console.error('Error fetching drafts:', err);
     }
-  };
+  }, []);
 
-  const fetchSendHistory = async () => {
+  const fetchSendHistory = useCallback(async () => {
     try {
       const response = await axios.get(`${API_URL}/newsletter/sends`, {
         headers: { 'x-admin-password': getAdminPassword() }
@@ -44,7 +39,12 @@ const NewsletterEditor = () => {
     } catch (err) {
       console.error('Error fetching send history:', err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchDrafts();
+    fetchSendHistory();
+  }, [fetchDrafts, fetchSendHistory]);
 
   const loadDraft = (draft) => {
     setSelectedDraft(draft);
